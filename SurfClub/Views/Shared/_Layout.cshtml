@@ -1,0 +1,80 @@
+﻿@using Microsoft.AspNetCore.Http
+@using SurfClub.Helpers
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var userId = HttpContextAccessor.HttpContext.Session.GetInt32("UserId");
+    var nickName = HttpContextAccessor.HttpContext.Session.GetString("NickName");
+    var photo = HttpContextAccessor.HttpContext.Session.GetString("Photo");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SurfClub</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container logobg">
+                <a class="navbar-brand" asp-area="" asp-controller="Feed" asp-action="Index">
+                    <img src="~/img/logo.jpg" />
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    @if (userId == null)
+                    {
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Index">Вход</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Register" asp-action="Index">Регистрация</a>
+                            </li>
+                        </ul>
+                    }
+                    else
+                    {
+                <ul class="navbar-nav">
+                    <div>
+                        @{
+                            var userPhoto = ImageHelper.GetUrl(new Guid(photo));
+                            if (userPhoto != null)
+                            {
+
+                                <img class="" src="@Url.Content(userPhoto)" width="40" />
+                            }
+                        }
+                    </div>
+
+                    <li class="nav-item">
+                        @nickName
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Logout"><img src="~/img/imgpsh_fullsize_anim.png" /></a>
+                    </li>
+                </ul>
+                  }
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

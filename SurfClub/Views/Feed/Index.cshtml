@@ -1,0 +1,91 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@HttpContextAccessor.HttpContext.Session.GetString("NickName")
+<br>
+@HttpContextAccessor.HttpContext.Session.GetString("Photo")
+<br>
+@HttpContextAccessor.HttpContext.Session.GetInt32("UserId")
+
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var userId = HttpContextAccessor.HttpContext.Session.GetInt32("UserId");
+}
+
+@model SurfClub.Models.DbModels.Post
+@using SurfClub.Helpers
+
+
+@if (userId != null)
+{
+    <form asp-controller="Feed" asp-action="AddPost"
+          method="post" enctype="multipart/form-data">
+
+        <div class="card">
+            <div class="card-header">Добавление нового поста</div>
+            <div class="card-body">
+            <div class="form-group">
+                <label asp-for="Text">Введите текст</label>
+                <textarea asp-for="Text" rows="10" cols="100"></textarea>
+                <span asp-validation-for="Text"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="file"
+                       accept=".jpg,.jpeg,.png"
+                       name="imageData" />
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Добавить" />
+            </div>
+            </div>
+
+        </div>
+    </form>
+     
+}
+
+
+@foreach (var post in ViewBag.Posts)
+{
+
+
+
+<div class="card">
+
+</div>
+        <div class="card-header">
+            @{
+                var userPhoto = ImageHelper.GetUrl(post.Author.Photo);
+                if (userPhoto != null)
+                {
+
+                    <img class ="" src="@Url.Content(userPhoto)" width="40" />
+                }
+            }
+
+            @post.Author.Nickname
+
+            @post.PublishDate
+        </div>
+        <div class="card-body">
+            @post.Text
+
+            @{
+                var photoUrl = ImageHelper.GetUrl(post.Photo);
+                if (photoUrl != null)
+                {
+
+                    <img class="" src="@Url.Content(photoUrl)" width="800" />
+                }
+            }
+       
+    </div>
+
+}
